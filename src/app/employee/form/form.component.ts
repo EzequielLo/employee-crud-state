@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormControl, FormGroup, Validators, } from '@angular/forms';
+import { FormBuilder, Validators, } from '@angular/forms';
 import { StoreEmployeeService } from 'src/app/services/store-employee.service';
+import { Employee } from 'src/app/model/employee';
 
 @Component({
   selector: 'app-form',
@@ -11,7 +12,7 @@ import { StoreEmployeeService } from 'src/app/services/store-employee.service';
 
 export class FormComponent implements OnInit {
 
-  id!: number;
+  employee!: Employee;
   formEmployee = this.fb.group({
     firstName: [[""], [Validators.pattern(/[a-z]{1,20}/g)]],
     lastName: [[""], [Validators.pattern(/[a-z]{1,20}/g)]],
@@ -29,18 +30,14 @@ export class FormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.router.url.includes("edit")) {
-      this.id = this.route.snapshot.params['id'];
-      this.onFindEmployee(this.id);
+      this.employee = this.route.snapshot.data['employee'];
+      this.formEmployee.get('firstName')!.setValue(this.employee.firstName);
+      this.formEmployee.get('lastName')!.setValue(this.employee.lastName);
+      this.formEmployee.get('emailId')!.setValue(this.employee.emailId);
+      this.action = 'update';
     }
   }
 
-  async onFindEmployee(id: number) {
-    const employee = await this.store.findemployee(id);
-    this.formEmployee.get('firstName')!.setValue(employee.firstName);
-    this.formEmployee.get('lastName')!.setValue(employee.lastName);
-    this.formEmployee.get('emailId')!.setValue(employee.emailId);
-    this.action = 'update';
-  }
 
 
   async onCreate() {
@@ -49,7 +46,7 @@ export class FormComponent implements OnInit {
   }
 
   async onUpdate() {
-    const id = this.id;
+    const id = this.employee.id;
     const firstName = this.formEmployee.get('firstName')!.value;
     const lastName = this.formEmployee.get('lastName')!.value;
     const emailId = this.formEmployee.get('emailId')!.value;

@@ -8,33 +8,39 @@ import { ProxyEmployeeService } from './proxyEmployee.service';
 @Injectable({
   providedIn: 'root'
 })
+
 export class EmployeeService {
 
   constructor(private proxy: ProxyEmployeeService) { }
 
   getEmployees(): Observable<Employee[]> {
+
     return this.proxy.getAllEmployees$().pipe(
       map(employeeDTO => {
         let employees: Employee[] = [];
         employeeDTO.map(employeeDTO => {
           employees = [...employees, this.adaptDTOToModel(employeeDTO)];
         });
+
         return employees;
       })
     );
   }
 
   getEmployee(employeeId: number): Observable<Employee> {
+
     return this.proxy.getEmployeeById$(employeeId).pipe(
       map(employeeDTO => this.adaptDTOToModel(employeeDTO))
     );
   }
 
   createEmployee(employee: Employee): Observable<Employee> {
+
     return this.proxy.createEmployee$(employee);
   }
 
   deleteEmployee(employeeId: number): Observable<Employee> {
+
     return this.proxy.deleteEmployee$(employeeId).pipe(
       map(employeeDTO => this.adaptDTOToModel(employeeDTO))
     );
@@ -42,12 +48,14 @@ export class EmployeeService {
   }
 
   updateEmployee(employeeId: number, employee: Employee): Observable<Employee> {
+
     return this.proxy.updateEmployee$(employeeId, this.adaptModelTODTO(employee)).pipe(
       map(employeeDTO => this.adaptDTOToModel(employeeDTO))
     );
   }
 
   private adaptDTOToModel(employeeDTO: EmployeeDTO): Employee {
+
     return {
       id: employeeDTO.id,
       firstName: employeeDTO.firstName,
@@ -63,7 +71,6 @@ export class EmployeeService {
       firstName: employee.firstName,
       lastName: employee.lastName,
       emailId: employee.emailId
-
     };
   }
 
