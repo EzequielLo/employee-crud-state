@@ -27,6 +27,7 @@ export class FormComponent implements OnInit {
     private fb: FormBuilder
   ) { }
 
+
   ngOnInit(): void {
     if (this.router.url.includes("edit")) {
       this.employee = this.route.snapshot.data['employee'];
@@ -36,6 +37,8 @@ export class FormComponent implements OnInit {
       this.action = 'update';
     }
   }
+
+
 
   async onCreate() {
     await this.store.create(this.formEmployee.value);
@@ -55,7 +58,12 @@ export class FormComponent implements OnInit {
   }
 
   onCancel() {
+    this.formEmployee.get('firstName')!.setValue("");
+    this.formEmployee.get('lastName')!.setValue("");
+    this.formEmployee.get('emailId')!.setValue("");
+    this.action = '';
     this.goToEmployeeList();
+
   }
 
   goToEmployeeList() {
